@@ -57,8 +57,8 @@ Sometimes it is useful to build just a single frame, or subset of frames. Below 
 sysfonts::font_add_google('Abel','abel')
 
 # Build a specific subset of days
-days <- c(707:717)
-scipiper::scmake(sprintf('6_visualize/tmp/frame_20210%s_00.png', days), '6_timestep_gif_tasks.yml')
+days <- c(211:215)
+scipiper::scmake(sprintf('6_visualize/tmp/frame_20200%s_00.png', days), '6_timestep_gif_tasks.yml')
 
 # Build a single frame:
 scipiper::scmake('6_visualize/tmp/frame_20200210_00.png', '6_timestep_gif_tasks.yml')
@@ -101,6 +101,7 @@ dates_to_build <- lapply(lapply(yaml::read_yaml("callouts_cfg.yml"), '[[', "text
 sysfonts::font_add_google('Abel','abel')
 scipiper::scmake(sprintf('6_visualize/tmp/frame_%s_00.png', dates_to_build), '6_timestep_gif_tasks.yml', force=TRUE)
 
+
 ```
 
 # Steps for using script-based process for creating callouts
@@ -112,20 +113,6 @@ It is not currently built into the `scipiper` code yet. BUT here is what you nee
 3. Now go manually edit `callouts_cfg.yml`.
 
 Eventually, it would be nice to get this download/read/upload process into the pipeline, but for now it is not.
-
-```r
-# Create a table from the final callouts to share as needed
-lapply(yaml.load_file("callouts_cfg.yml"), function(x) {
-  tibble(EventDescription = paste(x$text$label, collapse = " "),
-         EventStart = x$event_dates$start,
-         EventEnd = x$event_dates$end)
-}) %>% 
-  bind_rows() %>% 
-  filter(nchar(EventDescription) > 0) %>% 
-  arrange(EventStart, EventEnd) %>% 
-  View()
-
-```
 
 # To create a template for making the overlays, run the following
 
@@ -153,8 +140,8 @@ create_animation_frame(
 # To create a Drupal carousel-optimized image, run the following
 
 ```
-version_info <- "river_conditions_jan_mar_2022"
-frame_to_use <- "6_visualize/tmp/frame_20220325_00.png"
+version_info <- "river_conditions_jul_sep_2021"
+frame_to_use <- "6_visualize/tmp/frame_20210903_00.png"
 
 run_magick_cmd <- function(command_str) {
   if(Sys.info()[['sysname']] == "Windows") {
@@ -173,8 +160,8 @@ run_magick_cmd(sprintf("convert -composite -gravity center carousel_background.p
 # To create a Drupal thumbnail-optimized image, run the following
 
 ```
-version_info <- "river_conditions_jan_mar_2022"
-frame_to_use <- "6_visualize/tmp/frame_20220325_00.png"
+version_info <- "river_conditions_jul_sep_2021"
+frame_to_use <- "6_visualize/tmp/frame_20210903_00.png"
 thumbnail_dim <- 500
 
 viz_config <- yaml::yaml.load_file("viz_config.yml")
@@ -206,8 +193,8 @@ run_magick_cmd(sprintf("convert -composite -gravity center drupal_thumbnail.png 
 # Create a VisID compliant still image to be the paused frame view on Drupal
 
 ```
-version_info <- "river_conditions_jan_mar_2022"
-frame_to_use <- "6_visualize/tmp/frame_20220325_00.png"
+frame_to_use <- "6_visualize/tmp/frame_20210903_00.png"
+version_info <- "river_conditions_jul_sep_2021"
 visid_file <- "6_visualize/in/visid_overlay.png"
 
 # Get viz frame dimensions and then divide by 2 bc we 
@@ -263,8 +250,6 @@ run_magick_cmd(sprintf(
 # To create a USGS VisID compliant video version
 
 ```
-version_info <- "river_conditions_jan_mar_2022"
-
 # This works very well for viz_config height and width of 2048 & 4096.
 # Unsure about what changes may be needed for other dimensions.
 
@@ -274,11 +259,11 @@ timestep_frame_config <- remake::fetch("timestep_frame_config")
 viz_config_dim <- lapply(timestep_frame_config, function(x) x/2) 
 
 # Identify files
-video_file <- sprintf("6_visualize/out/%s_twitter.mp4", version_info)
+video_file <- "6_visualize/out/river_conditions_jul_sep_2021_twitter.mp4"
 video_logo_cover_file <- "6_visualize/tmp/video_logocovered_for_visid.mp4"
 video_scaled_for_visid_file <- "6_visualize/tmp/video_scaled_for_visid.mp4"
 visid_file <- "6_visualize/in/visid_overlay.png"
-video_w_visid_file <- sprintf("6_visualize/out/%s_visid.mp4", version_info)
+video_w_visid_file <- "6_visualize/out/river_conditions_jul_sep_2021_visid.mp4"
 
 # Cover up the existing USGS logo
 system(sprintf(
@@ -314,11 +299,9 @@ system(sprintf(
 # Create a visID version that isn't too big for Facebook
 
 ```
-version_info <- "river_conditions_jan_mar_2022"
-
-video_file <- sprintf("6_visualize/out/%s_visid.mp4", version_info)
+video_file <- "6_visualize/out/river_conditions_jul_sep_2021_visid.mp4"
 video_resized_for_facebook <- "6_visualize/tmp/video_facebook_aspect_ratio.mp4"
-video_downscaled_for_facebook <- sprintf("6_visualize/out/%s_facebook.mp4", version_info)
+video_downscaled_for_facebook <- "6_visualize/out/river_conditions_jul_sep_2021_facebook.mp4"
 
 # Get viz frame dimensions and then divide by 2 bc we 
 # double them in combine_animation_frame
@@ -393,12 +376,10 @@ video_stitched <- "6_visualize/tmp/stitched.mp4"
 video_intro <- "6_visualize/tmp/intro.mp4"
 video_outro <- "6_visualize/tmp/outro.mp4"
 video_stitched_full_length <- "6_visualize/tmp/stitched_full.mp4"
-
-version_info <- "river_conditions_jan_mar_2022"
-video_insta <- sprintf("6_visualize/out/%s_insta.mp4", version_info)
+video_insta <- "6_visualize/out/river_conditions_jul_sep_2021_insta.mp4"
 
 reg_animation_start <- 4 # seconds into animation that map is first shown
-reg_animation_end <- 48 # seconds into animation that map is last shown
+reg_animation_end <- 49 # seconds into animation that map is last shown
 
 insta_dim <- 600 # square shape
 
@@ -618,13 +599,11 @@ system(sprintf(
 Do this by adding one single still image before the video
 
 ```r
-version_info <- "river_conditions_jan_mar_2022"
-
 # Make video with still image before
 viz_config <- scmake("viz_config")
-frame_to_use_t <- 38 # TODO: pick the frame you want
-video_reddit <- sprintf("6_visualize/out/%s_reddit.mp4", version_info)
-video_in <- sprintf("6_visualize/out/%s_twitter.mp4", version_info)
+frame_to_use_t <- 22
+video_reddit <- "6_visualize/out/river_conditions_jul_sep_2021_reddit.mp4"
+video_in <- "6_visualize/out/river_conditions_jul_sep_2021_twitter.mp4"
 video_still_frame <- "6_visualize/tmp/video_still_frame.mp4"
 
 # First, cut out just this frame from video
